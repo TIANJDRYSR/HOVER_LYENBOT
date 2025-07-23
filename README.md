@@ -50,7 +50,7 @@ demonstrations and to link to the original implementation in Isaac Gym, please v
 
 ## 1. 重新安装 Isaac Sim
 
-- 安装新版 Isaac Sim (如 Isaac Sim 2023)
+- 安装新版 Isaac Sim 
 - 重命名为 `Isaacsim2.0`
 
 ## 2. 复制 IsaacLab 环境
