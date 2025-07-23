@@ -46,33 +46,7 @@ demonstrations and to link to the original implementation in Isaac Gym, please v
 
 <img src="docs/robots_in_action.gif" alt="Humanoid robots tracking motions from the AMASS dataset" width="400"/>
 
-# Installation
-
-1. Install Isaac Lab, see the [installation guide](https://isaac-sim.github.io/IsaacLab/v2.0.0/source/setup/installation/index.html).
-    **Note**: Currently HOVER has been tested with Isaac Lab versions 2.0.0. After you clone the Isaac Lab
-    repository, check out the specific tag before installation. Also note that the `rsl_rl`
-    package is renamed to `rsl_rl_lib` with the current `v2.0.0` tag of Isaac Lab, causing installation issues.
-    This will be fixed once a new tag is created on the Isaac Lab repo.
-    This error would not affect this repo, as we have our own customized `rsl_rl` package.
-    ```bash
-    git fetch origin
-    git checkout v2.0.0
-    ```
-2. Define the following environment variable to specify the path to your IsaacLab installation:
-    ```bash
-    # Set the ISAACLAB_PATH environment variable to point to your IsaacLab installation directory
-    export ISAACLAB_PATH=<your_isaac_lab_path>
-    ```
-3. Clone the repo and its submodules:
-    ```bash
-    git clone --recurse-submodules <REPO_URL>
-    ```
-4. Install this repo and its dependencies by running the following command from the root of this
-   repo:
-    ```bash
-    ./install_deps.sh
-
-#Installation while you have other diffrent version
+# Installation while you have other diffrent version Isaaclab
 
 ## 1. 重新安装 Isaac Sim
 
@@ -113,13 +87,13 @@ export ISAACSIM_PYTHON_EXE="${ISAACSIM_PATH}/python.sh"
 
 ## 5. 安装 HOVER 依赖
 
-不安装 `rsl_rl` 时：
+避免rsl_rl冲突的情况下安装isaaclab：
 
 ```bash
 ./isaaclab.sh --install none
 ```
 
-清洁性测试：
+测试安装是否成功：
 
 ```bash
 ./isaaclab.sh -p scripts/tutorials/00_sim/create_empty.py
