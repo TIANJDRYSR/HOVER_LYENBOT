@@ -71,6 +71,182 @@ demonstrations and to link to the original implementation in Isaac Gym, please v
    repo:
     ```bash
     ./install_deps.sh
+
+#Installation while you have other diffrent version
+
+## 1. 重新安装 Isaac Sim
+
+- 安装新版 Isaac Sim (如 Isaac Sim 2023)
+- 重命名为 `Isaacsim2.0`
+
+## 2. 复制 IsaacLab 环境
+
+- 复制已有的 IsaacLab 文件夹
+- 重命名为 `IsaacLab2.0`
+
+使用以下指令切换版本：
+
+```bash
+cd IsaacLab2.0
+git fetch origin
+git checkout v2.0.0
+ln -s <path_to_isaac_sim> _isaac_sim  # 请替换成你安装的 Isaac Sim 路径
+```
+
+## 3. 创建 Conda 虚拟环境
+
+```bash
+./isaaclab.sh --conda hover
+# 或简写
+./isaaclab.sh -c hover
+```
+
+## 4. 指定环境路径
+
+注意：在 Conda 环境 `hover` 被启用后执行
+
+```bash
+export ISAACLAB_PATH=<your_isaac_lab_path>
+export ISAACSIM_PATH="/home/evelin/Isaacsim2.0"
+export ISAACSIM_PYTHON_EXE="${ISAACSIM_PATH}/python.sh"
+```
+
+## 5. 安装 HOVER 依赖
+
+不安装 `rsl_rl` 时：
+
+```bash
+./isaaclab.sh --install none
+```
+
+清洁性测试：
+
+```bash
+./isaaclab.sh -p scripts/tutorials/00_sim/create_empty.py
+```
+
+## 6. 克隆 HOVER
+
+```bash
+git clone --recurse-submodules https://github.com/NVlabs/HOVER.git
+```
+
+## 7. 安装依赖
+
+```bash
+cd HOVER
+./install_deps.sh
+```
+
+如果失败：
+
+```bash
+# 安装 neural_wbc 模块
+pip install -e ./neural_wbc/core
+pip install -e ./neural_wbc/data
+pip install -e ./neural_wbc/isaac_lab_wrapper
+pip install -e ./neural_wbc/inference_env
+pip install -e ./neural_wbc/mujoco_wrapper
+pip install -e ./neural_wbc/student_policy
+
+# 安装 third_party 模块
+pip install -e ./third_party/human2humanoid/phc
+pip install -e ./third_party/rsl_rl
+pip install -e ./third_party/mujoco_viewer
+```
+
+## 8. 数据库下载
+
+### 下载 AMASS 数据集
+
+- 页面: https\://amass.is.tue.mpg.de/
+- 格式: SMPL+H G
+
+### 下载 SMPL 解算
+
+- SMPL\_python\_v.1.1.0.zip
+
+## 9. 数据库导入
+
+### AMASS 压缩包
+
+```bash
+mkdir -p third_party/human2humanoid/data/AMASS/AMASS_Complete
+# 将压缩包直接放入该文件夹
+```
+
+### SMPL
+
+1. 解压 SMPL\_python\_v.1.1.0.zip
+2. 找到主要的 `.pkl` 文件
+3. 重命名为：
+
+```
+SMPL_FEMALE.pkl
+SMPL_MALE.pkl
+SMPL_NEUTRAL.pkl
+```
+
+4. 安装到
+
+```bash
+mkdir -p third_party/human2humanoid/data/smpl
+# 将 .pkl 文件放入该文件夹
+```
+
+## 10. 重定向 AMASS 数据
+
+### 处理全部动作
+
+```bash
+./retarget_h1.sh
+```
+
+### 处理单个动作
+
+1. 编辑 motions\_bml.yaml
+
+```bash
+nano third_party/human2humanoid/data/motions_bml.yaml
+```
+
+2. 增加动作路径：
+
+```
+- BMLhandball/S01_Expert/Trial_upper_left_005_poses.npz
+```
+
+3. 执行转换
+
+```bash
+./retarget_h1.sh --motions-file third_party/human2humanoid/data/motions_bml.yaml
+```
+
+完成后产生
+
+```
+third_party/human2humanoid/data/h1/motions_bml.pkl
+```
+
+## 11. 培训教师策略
+
+```bash
+${ISAACLAB_PATH:?}/isaaclab.sh -p scripts/rsl_rl/train_teacher_policy.py \
+    --num_envs 1024 \
+    --reference_motion_path neural_wbc/data/data/motions/stable_punch.pkl
+```
+
+## 12. 培训学生策略
+
+```bash
+${ISAACLAB_PATH:?}/isaaclab.sh -p scripts/rsl_rl/train_student_policy.py \
+    --num_envs 1024 \
+    --reference_motion_path neural_wbc/data/data/motions/stable_punch.pkl \
+    --teacher_policy.resume_path neural_wbc/data/data/policy/h1:teacher \
+    --teacher_policy.checkpoint model_<iteration_number>.pt \
+    --headless
+```
+
     ```
 
 # Training
